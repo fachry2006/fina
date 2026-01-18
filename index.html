@@ -3,200 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pesan Spesial</title>
+    <title>Januari 2026 - Momen Spesial Zaki</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0d0d0d;
-            --env: #1e293b;
-            --paper: #fdfcf7;
-            --gold: #c5a059;
+            --sage-green: #5d6d5a;
+            --deep-charcoal: #1a1c1d;
+            --gold-accent: #b08d49;
+            --bg-off-white: #efebe3;
+            --paper-texture: url("https://www.transparenttextures.com/patterns/handmade-paper.png");
         }
 
         body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-off-white);
+            color: var(--deep-charcoal);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             margin: 0;
-            background: var(--bg);
-            font-family: 'Inter', sans-serif;
-            height: 100vh;
-            width: 100vw;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            -webkit-tap-highlight-color: transparent;
+            padding: 1rem;
         }
 
-        /* ================= MOBILE FIRST ================= */
-        .main-stage {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .serif { font-family: 'Lora', serif; }
+        .heading { font-family: 'Playfair Display', serif; }
 
-        .envelope-wrapper {
-            position: relative;
-            width: 88vw;
-            max-width: 340px;
-            aspect-ratio: 16 / 10;
-        }
-
-        .envelope-back,
-        .pocket,
-        .flap {
-            position: absolute;
+        .fade-overlay {
+            position: fixed;
             inset: 0;
-            background: var(--env);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 40;
+        }
+        .fade-overlay.active {
+            opacity: 1;
+            pointer-events: all;
         }
 
-        .envelope-back { z-index: 1; }
-
-        .pocket {
-            z-index: 5;
-            clip-path: polygon(0 0, 15% 0, 50% 50%, 85% 0, 100% 0, 100% 100%, 0 100%);
+        .calendar-frame {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 380px;
+            width: 100%;
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            position: relative;
+            z-index: 10;
         }
 
-        .flap {
-            z-index: 6;
-            clip-path: polygon(0 0, 100% 0, 50% 55%);
-            transform-origin: top;
-            transition: transform 0.5s ease;
+        .day {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #ccc;
         }
 
-        .wax-seal {
+        .special-day {
+            color: var(--deep-charcoal) !important;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .special-day::before {
+            content: '';
             position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--gold-accent);
+            border-radius: 50%;
+            background: rgba(176, 141, 73, 0.1);
+        }
+
+        /* Note Card yang Terlihat Seperti Kertas Nyata */
+        .note-card {
+            background-color: #fffef0;
+            background-image: var(--paper-texture);
+            padding: 2.5rem 2rem;
+            width: 85%;
+            max-width: 320px;
+            position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -30%);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #8e1b1b, #5c0a0a);
-            z-index: 10;
-            display: flex;
+            transform: translate(-50%, -45%) scale(0.9) rotate(2deg);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 55;
+            box-shadow: 
+                2px 2px 0 #e6e4d5,
+                4px 4px 0 #dad8c7,
+                15px 15px 40px rgba(0,0,0,0.2);
+            border-radius: 2px;
+        }
+
+        .note-card.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1) rotate(-1deg);
+        }
+
+        /* Sobekan Kertas (Efek bawah) */
+        .note-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 10px;
+            background: linear-gradient(135deg, transparent 5px, #fffef0 0) 0 5px,
+                        linear-gradient(-135deg, transparent 5px, #fffef0 0) 0 5px;
+            background-size: 10px 10px;
+            transform: translateY(100%);
+        }
+
+        /* Surat Tanpa Scroll */
+        #full-message {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-size: 10px;
-            letter-spacing: 2px;
+            padding: 1.5rem;
         }
 
-        /* ================= LETTER ================= */
-        .letter {
-            position: absolute;
-            left: 50%;
-            bottom: 6px;
-            transform: translateX(-50%);
-            width: 92%;
-            height: 65%;
-            background: var(--paper);
-            border-radius: 6px;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 2;
-            transition: transform 0.6s ease, height 0.6s ease;
-        }
-
-        .letter-content {
-            text-align: center;
+        .letter-wrap {
+            background-color: #ffffff;
+            background-image: var(--paper-texture);
+            width: 100%;
+            max-width: 450px;
+            max-height: 95vh;
+            padding: 3.5rem 2rem;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.4);
+            transform: translateY(30px);
             opacity: 0;
-            transition: opacity 0.4s ease 0.3s;
+            transition: all 0.7s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 2px;
+            overflow: hidden; 
         }
 
-        .open .flap {
-            transform: rotateX(180deg);
-        }
-
-        .open .letter {
-            transform: translate(-50%, -55%);
-            height: 150%;
-            z-index: 20;
-        }
-
-        .open .letter-content {
+        #full-message.active .letter-wrap {
+            transform: translateY(0);
             opacity: 1;
         }
 
-        /* ================= FULLSCREEN (HP) ================= */
-        .full-screen {
-            position: fixed;
-            inset: 0;
-            background: var(--paper);
-            z-index: 100;
+        .btn-black {
+            display: block;
+            width: 100%;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: var(--deep-charcoal);
+            color: #fff;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
         }
 
-        .full-screen .envelope-wrapper,
-        .full-screen .flap,
-        .full-screen .pocket,
-        .full-screen .envelope-back,
-        .full-screen .wax-seal {
-            display: none;
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #aaa;
         }
 
-        .full-screen .letter {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            transform: none;
-            border-radius: 0;
-            padding: 48px 28px;
-        }
-
-        /* ================= TEXT ================= */
-        .serif { font-family: 'Crimson Pro', serif; }
-
-        .hint {
-            position: fixed;
-            bottom: 24px;
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: #666;
+        @media (max-width: 400px) {
+            .letter-wrap { padding: 2.5rem 1.5rem; }
+            .heading { font-size: 2rem; }
+            .serif { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="main-stage" id="stage">
-    <div class="envelope-wrapper" id="env">
-        <div class="flap"></div>
-        <div class="wax-seal" onclick="openEnvelope()">HBD</div>
+    <div id="overlay" class="fade-overlay" onclick="closeEverything()"></div>
 
-        <div class="letter" onclick="expandLetter(event)">
-            <div class="letter-content">
-                <p style="font-size:10px;letter-spacing:4px;color:#999;margin-bottom:12px">PERSONAL MESSAGE</p>
-                <h1 class="serif" style="font-size:32px;color:#333;margin-bottom:16px">Selamat<br>Ulang Tahun</h1>
-                <p class="serif" style="font-size:18px;color:#555;line-height:1.6">
-                    Semoga hari ini penuh bahagia, kesehatan, dan hal baik yang menyertai langkahmu.
-                </p>
-            </div>
+    <header class="text-center mb-6 relative z-10">
+        <span class="text-[8px] tracking-[0.8em] text-gray-500 uppercase block mb-1 font-bold">Januari 2026</span>
+        <h1 class="heading italic font-bold text-gray-800 text-3xl">Momen Spesial</h1>
+    </header>
+
+    <div class="calendar-frame" id="calendar-wrapper">
+        <div class="grid grid-cols-7 gap-1 mb-4 text-center">
+            <div class="text-[9px] font-bold text-gray-300">S</div>
+            <div class="text-[9px] font-bold text-gray-300">M</div>
+            <div class="text-[9px] font-bold text-gray-300">T</div>
+            <div class="text-[9px] font-bold text-gray-300">W</div>
+            <div class="text-[9px] font-bold text-gray-300">T</div>
+            <div class="text-[9px] font-bold text-gray-300">F</div>
+            <div class="text-[9px] font-bold text-gray-300">S</div>
         </div>
-
-        <div class="pocket"></div>
-        <div class="envelope-back"></div>
+        <div id="calendar-days" class="grid grid-cols-7 gap-1"></div>
     </div>
 
-    <div class="hint">Sentuh segel untuk membuka</div>
-</div>
+    <!-- Note Card yang Lebih Seperti Kertas -->
+    <div id="sticky-note" class="note-card">
+        <h3 class="serif italic text-2xl mb-3 text-gray-800">Catatan Kecil</h3>
+        <p class="text-[11px] text-gray-500 font-medium leading-relaxed tracking-wide">
+            Teruntuk Zaki, ada sebuah pesan tulus yang ingin aku sampaikan padamu di hari istimewa ini.
+        </p>
+        <button onclick="showFullMessage()" class="btn-black mt-6">Baca Surat</button>
+    </div>
 
-<script>
-const env = document.getElementById('env');
-const stage = document.getElementById('stage');
+    <!-- Surat Utama (Tanpa Scroll Bar) -->
+    <div id="full-message">
+        <div class="letter-wrap">
+            <div class="close-btn" onclick="hideFullMessage()">✕</div>
+            
+            <header class="mb-6">
+                <p class="text-[9px] tracking-[0.5em] text-gray-400 uppercase font-bold mb-2">Teruntuk Zaki</p>
+                <h2 class="heading text-3xl text-gray-900 italic">Selamat Ulang Tahun</h2>
+            </header>
+            
+            <div class="serif text-gray-700 leading-relaxed text-[14px] md:text-[16px]">
+                <p class="mb-4">Hari ini adalah perayaan untuk jiwa yang luar biasa sepertimu.</p>
+                
+                <p class="mb-4">Di usiamu yang baru ini, aku mendoakan agar ketenangan selalu menyertai setiap langkahmu, dan kebahagiaan senantiasa hadir dalam bentuk yang paling indah.</p>
+                
+                <p class="mb-4">Teruslah menjadi pribadi yang hebat. Dunia terasa jauh lebih baik karena kehadiranmu di dalamnya.</p>
+                
+                <div class="mt-8 pt-6 border-t border-gray-100">
+                    <p class="text-[10px] italic text-gray-400 mb-1">Doa tulus dari,</p>
+                    <p class="text-lg font-bold text-gray-800 tracking-tight">Syafina</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-function openEnvelope(){
-    env.classList.add('open');
-    if (navigator.vibrate) navigator.vibrate(30);
-}
+    <script>
+        const daysContainer = document.getElementById('calendar-days');
+        const stickyNote = document.getElementById('sticky-note');
+        const overlay = document.getElementById('overlay');
+        const wrapper = document.getElementById('calendar-wrapper');
+        const modal = document.getElementById('full-message');
 
-function expandLetter(e){
-    e.stopPropagation();
-    if(env.classList.contains('open')){
-        stage.classList.add('full-screen');
-    }
-}
-</script>
+        function init() {
+            // Jan 2026 starts on Thursday
+            for (let i = 0; i < 4; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'day';
+                daysContainer.appendChild(empty);
+            }
 
+            for (let d = 1; d <= 31; d++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'day font-medium';
+                dayEl.textContent = d;
+
+                if (d === 19) {
+                    dayEl.classList.add('special-day');
+                    dayEl.onclick = (e) => {
+                        e.stopPropagation();
+                        openNote();
+                    };
+                }
+                daysContainer.appendChild(dayEl);
+            }
+        }
+
+        function openNote() {
+            stickyNote.classList.add('active');
+            overlay.classList.add('active');
+            wrapper.style.transform = 'scale(0.9) blur(4px)';
+            wrapper.style.filter = 'grayscale(0.8)';
+        }
+
+        function showFullMessage() {
+            stickyNote.classList.remove('active');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 50);
+        }
+
+        function hideFullMessage() {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                closeEverything();
+            }, 600);
+        }
+
+        function closeEverything() {
+            stickyNote.classList.remove('active');
+            overlay.classList.remove('active');
+            wrapper.style.transform = 'scale(1) blur(0)';
+            wrapper.style.filter = 'none';
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
