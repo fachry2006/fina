@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Januari 2026 - Momen Spesial Zaki</title>
+    <title>Januari 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <style>
@@ -86,7 +86,6 @@
             background: rgba(176, 141, 73, 0.1);
         }
 
-        /* Note Card yang Terlihat Seperti Kertas Nyata */
         .note-card {
             background-color: #fffef0;
             background-image: var(--paper-texture);
@@ -114,7 +113,6 @@
             transform: translate(-50%, -50%) scale(1) rotate(-1deg);
         }
 
-        /* Sobekan Kertas (Efek bawah) */
         .note-card::after {
             content: '';
             position: absolute;
@@ -126,7 +124,6 @@
             transform: translateY(100%);
         }
 
-        /* Surat Tanpa Scroll */
         #full-message {
             position: fixed;
             inset: 0;
@@ -143,7 +140,7 @@
             width: 100%;
             max-width: 450px;
             max-height: 95vh;
-            padding: 3.5rem 2rem;
+            padding: 3rem 2rem;
             box-shadow: 0 50px 100px rgba(0,0,0,0.4);
             transform: translateY(30px);
             opacity: 0;
@@ -164,7 +161,7 @@
         .btn-black {
             display: block;
             width: 100%;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             padding: 1rem;
             background: var(--deep-charcoal);
             color: #fff;
@@ -187,8 +184,8 @@
 
         @media (max-width: 400px) {
             .letter-wrap { padding: 2.5rem 1.5rem; }
-            .heading { font-size: 2rem; }
-            .serif { font-size: 0.9rem; }
+            .heading { font-size: 1.8rem; }
+            .serif { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -214,35 +211,35 @@
         <div id="calendar-days" class="grid grid-cols-7 gap-1"></div>
     </div>
 
-    <!-- Note Card yang Lebih Seperti Kertas -->
     <div id="sticky-note" class="note-card">
         <h3 class="serif italic text-2xl mb-3 text-gray-800">Catatan Kecil</h3>
         <p class="text-[11px] text-gray-500 font-medium leading-relaxed tracking-wide">
-            Teruntuk Zaki, ada sebuah pesan tulus yang ingin aku sampaikan padamu di hari istimewa ini.
+            Untuk zaki, ada satu hal yang ingin kusampaikan hari ini.
         </p>
         <button onclick="showFullMessage()" class="btn-black mt-6">Baca Surat</button>
     </div>
 
-    <!-- Surat Utama (Tanpa Scroll Bar) -->
     <div id="full-message">
         <div class="letter-wrap">
             <div class="close-btn" onclick="hideFullMessage()">✕</div>
             
-            <header class="mb-6">
-                <p class="text-[9px] tracking-[0.5em] text-gray-400 uppercase font-bold mb-2">Teruntuk Zaki</p>
-                <h2 class="heading text-3xl text-gray-900 italic">Selamat Ulang Tahun</h2>
+            <header class="mb-5">
+                <p class="text-[9px] tracking-[0.5em] text-gray-400 uppercase font-bold mb-2">Teruntuk zaki</p>
+                <h2 class="heading text-3xl text-gray-900 italic">Happy Birthday</h2>
             </header>
             
-            <div class="serif text-gray-700 leading-relaxed text-[14px] md:text-[16px]">
-                <p class="mb-4">Hari ini adalah perayaan untuk jiwa yang luar biasa sepertimu.</p>
+            <div class="serif text-gray-700 leading-relaxed text-[13px] md:text-[15px]">
+                <p class="mb-4">zaki, selamat ulang tahun ya!</p>
                 
-                <p class="mb-4">Di usiamu yang baru ini, aku mendoakan agar ketenangan selalu menyertai setiap langkahmu, dan kebahagiaan senantiasa hadir dalam bentuk yang paling indah.</p>
+                <p class="mb-4 italic">"May this year bring you closer to your dreams, surround you with people who truly care, and fill your days with laughter and unforgettable moments."</p>
                 
-                <p class="mb-4">Teruslah menjadi pribadi yang hebat. Dunia terasa jauh lebih baik karena kehadiranmu di dalamnya.</p>
+                <p class="mb-4">Pada hari spesial ini, aku hanya ingin kamu bahagia. Benar-benar bahagia. Kamu pantas mendapatkannya, bahkan lebih.</p>
                 
-                <div class="mt-8 pt-6 border-t border-gray-100">
-                    <p class="text-[10px] italic text-gray-400 mb-1">Doa tulus dari,</p>
-                    <p class="text-lg font-bold text-gray-800 tracking-tight">Syafina</p>
+                <p class="mb-4">Sekali lagi, happy birthday ya!</p>
+                
+                <div class="mt-6 pt-5 border-t border-gray-100">
+                    <p class="text-[10px] italic text-gray-400 mb-1">Penuh doa,</p>
+                    <p class="text-lg font-bold text-gray-800 tracking-tight">fina</p>
                 </div>
             </div>
         </div>
@@ -256,7 +253,6 @@
         const modal = document.getElementById('full-message');
 
         function init() {
-            // Jan 2026 starts on Thursday
             for (let i = 0; i < 4; i++) {
                 const empty = document.createElement('div');
                 empty.className = 'day';
